@@ -1,0 +1,26 @@
+{
+  "name": "advent-of-code-2021",
+  "version": "2021.12.1",
+  "description": "My entries for https://adventofcode.com in 2021! 🥳",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccjmne/advent-of-code-2021.git"
+  },
+  "keywords": [
+    "AdventOfCode",
+    "advent",
+    "code",
+    "2021"
+  ],
+  "author": "Eric NICOLAS <ccjmne@gmail.com> (ccjmne)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ccjmne/advent-of-code-2021/issues"
+  },
+  "homepage": "https://github.com/ccjmne/advent-of-code-2021#readme"
+}
