@@ -1,6 +1,7 @@
 'use strict';
 
 import getInput from "../input.js";
+import { range } from "../utils.js";
 
 const input = getInput(import.meta.url)
   .split(/\n/g)
@@ -39,7 +40,7 @@ console.log(
  * @param { function(number, number): boolean } selector
  */
 function gen2(selector) {
-  return parseInt([...Array(INPUT_WIDTH)].map((_, i) => i).reduce(
+  return parseInt(range(INPUT_WIDTH).reduce(
     function (words, at) {
       if(words.length <= 1) {
         return words;
