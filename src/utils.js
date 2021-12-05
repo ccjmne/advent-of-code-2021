@@ -1,10 +1,11 @@
 /**
- * An array of integers going from 0 (inclusive) to `size` (exclusive).
+ * An array of `length` values going from `offset` (inclusive) to `offset + length * step` (exclusive).
  * @param { number } length
+ * @param { { offset: number, step: number } } 2 default offset: `0`, default step: `1`
  * @returns { number[] }
  */
-export function range(length) {
-  return Array.from({ length }, (_, i) => i);
+export function range(length, { offset, step } = { offset: 0, step: 1 }) {
+  return Array.from({ length }, (_, i) => offset + i * step);
 }
 
 export const Styles = Object.freeze({ RESET: 0b0000001, BRIGHT: 0b0000010, DIM: 0b0000100, UNDERSCORE: 0b0001000, BLINK: 0b0010000, REVERSE: 0b0100000, HIDDEN: 0b1000000 });
