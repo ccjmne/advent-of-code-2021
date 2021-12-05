@@ -11,8 +11,8 @@ export const Styles = Object.freeze({ RESET: 0b0000001, BRIGHT: 0b0000010, DIM: 
 const STYLES_MAP = { [Styles.RESET]: '\x1b[0m', [Styles.BRIGHT]: '\x1b[1m', [Styles.DIM]: '\x1b[2m', [Styles.UNDERSCORE]: '\x1b[4m', [Styles.BLINK]: '\x1b[5m', [Styles.REVERSE]: '\x1b[7m', [Styles.HIDDEN]: '\x1b[8m' };
 
 /**
- * @param { string } text 
- * @param { number } styles A combination of flags from `Styles`.  
+ * @param { string } text
+ * @param { number } styles A combination of flags from `Styles`.
  * For example: `Styles.BRIGHT & Styles.UNDERSCORE`
  * @returns { string }
  */

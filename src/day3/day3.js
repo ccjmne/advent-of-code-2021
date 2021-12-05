@@ -33,7 +33,7 @@ console.log(
 /**
  * Filters words from `const input` using the specified `selector`, for each bit
  * from left to right, until there's only one word left.
- * 
+ *
  * `selector` gets called with:
  * - the *most common bit value* at a given position
  * - the *current bit value* at that same position in a given word

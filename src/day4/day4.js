@@ -26,7 +26,7 @@ class Board {
 
   /**
    * Returns the score of the board if it is winning, `-1` otherwise.
-   * @param { number } draw 
+   * @param { number } draw
    * @returns { number }
    */
   accept(draw) {
@@ -54,7 +54,7 @@ function computeBoards() {
   return boardsData
     .flat()
     .reduce(
-      ({ boards, cells }, value) => 
+      ({ boards, cells }, value) =>
       cells.push(value) && (cells.length === BOARD_SIZE * BOARD_SIZE)
         ? { boards: [...boards, new Board(cells)], cells: [] }
         : { boards, cells },
@@ -63,7 +63,7 @@ function computeBoards() {
 }
 
 /**
- * @param { Board } board 
+ * @param { Board } board
  */
 function drawBoard(board) {
   return '\n' + board.cells.reduce(
