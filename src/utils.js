@@ -25,3 +25,28 @@ export function style(text, styles) {
     + text
     + STYLES_MAP[Styles.RESET];
 }
+
+/** @template T @param { T } t @returns { T } */
+export function identity(t) {
+  return t;
+}
+
+/**
+ * See https://stackoverflow.com/q/70237167/2427596
+ * @template T
+ * @template [U = T[]]
+ * @param { T[] } items
+ * @param { number } chunkSize
+ * @param { function(T[]): U } [mapper = identity]
+ * @returns { U[] }
+ */
+export function split(items, chunkSize, mapper = identity) {
+  return items.reduce(
+    /** @param { { chunks: U[], buffer: T[] } } */
+    ({ chunks, buffer }, item) =>
+      buffer.push(item) && (buffer.length === chunkSize)
+        ? { chunks: [...chunks, mapper(buffer)], buffer: []}
+        : { chunks, buffer },
+     { chunks: [], buffer: [] }
+  ).chunks;
+}

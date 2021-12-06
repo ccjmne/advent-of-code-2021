@@ -1,7 +1,7 @@
 'use strict';
 
 import getInput from "../input.js";
-import { range, style, Styles } from "../utils.js";
+import { range, split, style, Styles } from "../utils.js";
 
 const BOARD_SIZE = 5;
 
@@ -42,38 +42,17 @@ class Board {
   }
 }
 
-/**
- * @returns { Board[] }
- */
 function computeBoards() {
-  return boardsData
-    .flat()
-    .reduce(
-      ({ boards, cells }, value) =>
-      cells.push(value) && (cells.length === BOARD_SIZE * BOARD_SIZE)
-        ? { boards: [...boards, new Board(cells)], cells: [] }
-        : { boards, cells },
-      { boards: [], cells: [] }
-    ).boards;
+  return split(boardsData.flat(), BOARD_SIZE * BOARD_SIZE, cells => new Board(cells));
 }
 
-/**
- * @param { Board } board
- */
-function drawBoard(board) {
-  return '\n' + board.cells.reduce(
-    ({ rows, cells }, cell) =>
-      cells.push(cell) && (cells.length === BOARD_SIZE)
-        ? { rows: [...rows, cells], cells: []}
-        : { rows, cells },
-    { rows: [], cells: [] }
-  ).rows.map(
-    row => row.map(
-      ({ value, drawn }) => style(
-        String(value).padStart(2), drawn ? Styles.BRIGHT | Styles.UNDERSCORE : Styles.RESET
-      )
-    ).join(' ')
-  ).join('\n')
+/** @param { Board } board */
+function displayBoard(board) {
+  return '\n' + split(board.cells, BOARD_SIZE).map(
+    row => row.map(({ value, drawn }) => style(
+      String(value).padStart(2), drawn ? Styles.BRIGHT | Styles.UNDERSCORE : Styles.RESET
+    )).join(' ')
+  ).join('\n');
 }
 
 // PART I:
@@ -92,9 +71,9 @@ function first() {
 
 console.log(
   'Part I:',
-  '\n> Final score:', first().score,
+  '\n> Winning score:', first().score,
   '\n> Winning draw:', first().draw,
-  '\n> Winning board:', drawBoard(first().board),
+  '\n> Winning board:', displayBoard(first().board),
 );
 
 // PART II:
@@ -118,5 +97,5 @@ console.log(
   '\nPart II:',
   '\n> Last score:', last().score,
   '\n> Last draw:', last().draw,
-  '\n> Last board:', drawBoard(last().board),
+  '\n> Last board:', displayBoard(last().board),
 );
