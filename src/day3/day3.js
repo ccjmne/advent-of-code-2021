@@ -51,7 +51,7 @@ function gen2(selector) {
         return words;
       }
 
-      const mostCommon = +(words.reduce((tally, word) => tally + word[at], 0) >= words.length / 2);
+      const mostCommon = +(count(words, (word) => word[at]) >= words.length / 2);
       return words.filter((word, i) => selector(mostCommon, word[at]));
     },
     input

@@ -1,7 +1,7 @@
 'use strict';
 
 import getInput from '../input.js';
-import { range } from '../utils.js';
+import { count, range } from '../utils.js';
 
 /**
  * @type { { [key: string]: number }[] }
@@ -30,7 +30,7 @@ input
 
 console.log(
   'Part I:',
-  [...board.values()].reduce((count, overlap) => count + +(overlap >= 2), 0)
+  count([...board.values()], overlap => overlap >= 2),
 );
 
 // PART II:
@@ -45,5 +45,5 @@ input
 
 console.log(
   'Part II:',
-  [...board.values()].reduce((count, overlap) => count + +(overlap >= 2), 0)
+  count([...board.values()], overlap => overlap >= 2),
 );

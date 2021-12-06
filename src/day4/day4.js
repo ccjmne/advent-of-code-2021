@@ -1,7 +1,7 @@
 'use strict';
 
 import getInput from "../input.js";
-import { range, split, style, Styles } from "../utils.js";
+import { range, split, style, Styles, sum } from "../utils.js";
 
 const BOARD_SIZE = 5;
 
@@ -35,9 +35,7 @@ class Board {
     return (
       range(BOARD_SIZE).every(c => this.cells[row * BOARD_SIZE + c].drawn)
       || range(BOARD_SIZE).every(r => this.cells[r * BOARD_SIZE + col].drawn)
-    ) ? draw * this.cells
-        .filter(({ drawn }) => !drawn)
-        .reduce((score, { value }) => score + value, 0)
+    ) ? draw * sum(this.cells.filter(({ drawn }) => !drawn), ({ value }) => value)
       : -1;
   }
 }
