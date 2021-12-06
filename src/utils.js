@@ -1,10 +1,10 @@
 /**
  * An array of `length` values going from `offset` (inclusive) to `offset + length * step` (exclusive).
  * @param { number } length
- * @param { { offset: number, step: number } } 2 default offset: `0`, default step: `1`
+ * @param { { offset: number, step: number } } [options]
  * @returns { number[] }
  */
-export function range(length, { offset, step } = { offset: 0, step: 1 }) {
+export function range(length, { offset = 0, step = 1 } = {}) {
   return Array.from({ length }, (_, i) => offset + i * step);
 }
 
