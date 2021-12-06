@@ -5,7 +5,7 @@ import getInput from '../input.js';
 const input = getInput(import.meta.url)
   .split(/\n/g)
   .map(line => /(?<cmd>forward|down|up)\s+(?<value>\d+)/.exec(line).groups)
-  .map(({ cmd, value }) => ({ cmd, value: parseInt(value)}));
+  .map(({ cmd, value }) => ({ cmd, value: Number(value)}));
 
 // PART I:
 console.log(

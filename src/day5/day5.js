@@ -10,7 +10,7 @@ const input = getInput(import.meta.url)
   .split(/\n/g)
   .map(line => /(?<x1>\d+),(?<y1>\d+) -> (?<x2>\d+),(?<y2>\d+)/.exec(line).groups)
   .map(Object.entries)
-  .map(entries => entries.map(([k, v]) => [k, parseInt(v)]))
+  .map(entries => entries.map(([k, v]) => [k, Number(v)]))
   .map(Object.fromEntries);
 
 /** @type { Map<string, number> } */

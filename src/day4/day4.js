@@ -8,12 +8,7 @@ const BOARD_SIZE = 5;
 const [draws, ...boardsData] = getInput(import.meta.url)
   .split(/\n/g)
   .filter(line => line !== '')
-  .map(
-    line => line
-      .trimStart()
-      .split(/,|\s+/)
-      .map(value => parseInt(value))
-  );
+  .map(line => line.trimStart().split(/,|\s+/).map(Number));
 
 class Board {
   /**

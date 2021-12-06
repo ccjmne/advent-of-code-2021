@@ -5,7 +5,7 @@ import { range } from "../utils.js";
 
 const input = getInput(import.meta.url)
   .split(/\n/g)
-  .map(word => word.split(/(?<=[01])/).map(bit => parseInt(bit)));
+  .map(word => word.split(/(?<=[01])/).map(Number));
 
 // PART I:
 const INPUT_WIDTH = input[0].length;
@@ -18,14 +18,19 @@ function gen1() { // decodes ratings of the "generation 1" kind
   ).map(ones => +(ones >= INPUT_HEIGHT / 2))
 }
 
+/** @param { (0 | 1)[] } bits @returns { number } */
+function asInt(bits) {
+  return parseInt(bits.join(''), 2);
+}
+
 console.log(
   'Part I:',
   '\n> Gamma rate:',
-  parseInt(gen1().join(''), 2),
+  asInt(gen1()),
   '\n> Epsilon rate:',
-  parseInt(gen1().map(bit => +!bit).join(''), 2),
+  asInt(gen1().map(bit => +!bit)),
   '\n> Power consumption:',
-  parseInt(gen1().join(''), 2) * parseInt(gen1().map(bit => +!bit).join(''), 2)
+  asInt(gen1()) * asInt(gen1().map(bit => +!bit))
 );
 
 // PART II:
@@ -40,7 +45,7 @@ console.log(
  * @param { function(number, number): boolean } selector
  */
 function gen2(selector) {
-  return parseInt(range(INPUT_WIDTH).reduce(
+  return asInt(range(INPUT_WIDTH).reduce(
     function (words, at) {
       if(words.length <= 1) {
         return words;
@@ -50,7 +55,7 @@ function gen2(selector) {
       return words.filter((word, i) => selector(mostCommon, word[at]));
     },
     input
-  )[0].join(''), 2);
+  )[0]);
 }
 
 console.log(

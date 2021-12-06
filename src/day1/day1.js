@@ -4,7 +4,7 @@ import getInput from '../input.js';
 
 const input = getInput(import.meta.url)
   .split(/\n/g)
-  .map(depth => parseInt(depth));
+  .map(Number);
 
 // PART I:
 console.log(
