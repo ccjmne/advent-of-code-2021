@@ -14,7 +14,27 @@ export function range(length, { offset = 0, step = 1 } = {}) {
  * @returns { number }
  */
 export function sum(values, by = identity) {
-  return values.reduce((total, value) => total + by(value), 0);
+  return values.reduce((total, value) => total + by(value));
+}
+
+/**
+ * @template T
+ * @param { T[] } items
+ * @param { function(T, T): T } selector
+ * @returns { T }
+ */
+export function select(items, selector) {
+  return items.reduce((most, item) => selector(most, item));
+}
+
+/** @param { number[] } values @returns { number } */
+export function min(values) {
+  return select(values, (a, b) => b < a ? b : a);
+}
+
+/** @param { number[] } values @returns { number } */
+export function max(values) {
+  return select(values, (a, b) => b > a ? b : a);
 }
 
 /**
