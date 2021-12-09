@@ -52,8 +52,10 @@ const STYLES_MAP = { [Styles.RESET]: '\x1b[0m', [Styles.BRIGHT]: '\x1b[1m', [Sty
 
 /**
  * @param { string } text
- * @param { number } styles A combination of flags from `Styles`.
- * For example: `Styles.BRIGHT & Styles.UNDERSCORE`
+ * @param { number } styles A combination of flags from `Styles`. For example:
+ * ```
+ * Styles.BRIGHT | Styles.UNDERSCORE
+ * ```
  * @returns { string }
  */
 export function style(text, styles) {

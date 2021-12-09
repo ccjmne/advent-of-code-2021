@@ -33,7 +33,7 @@ function simulate(population, period) {
 
 console.log(
   'Part I:',
-  '\n> After 80 days:', simulate(input.slice(0), 80).length
+  '\n> After 80 days:', simulate(input.slice(0), 80).length,
 );
 
 // PART II:
@@ -51,5 +51,5 @@ function simulateV2(period) {
 
 console.log(
   'Part II:',
-  '\n> After 256 days:', simulateV2(256)
+  '\n> After 256 days:', simulateV2(256),
 );
