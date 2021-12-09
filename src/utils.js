@@ -14,7 +14,7 @@ export function range(length, { offset = 0, step = 1 } = {}) {
  * @returns { number }
  */
 export function sum(values, by = identity) {
-  return values.reduce((total, value) => total + by(value));
+  return values.reduce((total, value) => total + by(value), 0);
 }
 
 /**
