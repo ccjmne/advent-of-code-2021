@@ -18,6 +18,20 @@ export function sum(values, by = identity) {
 }
 
 /**
+ * @template K
+ * @template V
+ * @template W
+ * @param { { [key in K]: V } } object
+ * @param { function(K, V): W } by
+ * @returns { { [key in K]: W } }
+ */
+export function mapValues(object, by) {
+  return Object.fromEntries(
+    Object.entries(object).map(([k, v]) => [k, by(k, v)])
+  );
+}
+
+/**
  * @template T
  * @param { T[] } items
  * @param { function(T, T): T } selector

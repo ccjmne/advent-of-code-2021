@@ -1,7 +1,7 @@
 'use strict';
 
 import getInput from '../input.js';
-import { count, range } from '../utils.js';
+import { count, mapValues, range } from '../utils.js';
 
 /**
  * @type { { [key: string]: number }[] }
@@ -9,9 +9,7 @@ import { count, range } from '../utils.js';
 const input = getInput(import.meta.url)
   .split(/\n/g)
   .map(line => /(?<x1>\d+),(?<y1>\d+) -> (?<x2>\d+),(?<y2>\d+)/.exec(line).groups)
-  .map(Object.entries)
-  .map(entries => entries.map(([k, v]) => [k, Number(v)]))
-  .map(Object.fromEntries);
+  .map(groups => mapValues(groups, (_, v) => Number(v)));
 
 /** @type { Map<string, number> } */
 const board = new Map();
