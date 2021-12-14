@@ -9,12 +9,13 @@ export function range(length, { offset = 0, step = 1 } = {}) {
 }
 
 /**
- * @param { number [] } values
- * @param { function(number): number } [by=identity]
+ * @template T
+ * @param { T[] } items
+ * @param { function(T): number } [by=identity]
  * @returns { number }
  */
-export function sum(values, by = identity) {
-  return values.reduce((total, value) => total + by(value), 0);
+export function sum(items, by = identity) {
+  return items.reduce((total, item) => total + by(item), 0);
 }
 
 /**
@@ -22,13 +23,43 @@ export function sum(values, by = identity) {
  * @template V
  * @template W
  * @param { { [key in K]: V } } object
- * @param { function(K, V): W } by
+ * @param { function(V, K): W } by
  * @returns { { [key in K]: W } }
  */
 export function mapValues(object, by) {
   return Object.fromEntries(
-    Object.entries(object).map(([k, v]) => [k, by(k, v)])
+    Object.entries(object).map(([k, v]) => [k, by(v, k)])
   );
+}
+
+/**
+ * @template T
+ * @template [K = T]
+ * @template [V = T[]]
+ * @param { T[] } items
+ * @param { function(T): K } [by=identity]
+ * @param { function(T[], K): V } [aggregator=identity]
+ * @returns { { [key in K]: V } }
+ */
+export function aggregate(items, by = identity, aggregator = identity) {
+  return mapValues(
+    items.reduce(
+      (acc, item) => ({ ...acc, [by(item)]: [...(acc[by(item)] ?? []), item] }),
+      {}
+    ),
+    aggregator,
+  );
+}
+
+/**
+ * @template T
+ * @template K
+ * @param { T[] } items
+ * @param { function(T): K } [by=identity]
+ * @returns { { [key in K]: number } }
+ */
+export function occurrences(items, by = identity) {
+  return aggregate(items, by, ({ length }) => length);
 }
 
 /**
@@ -97,7 +128,7 @@ export function identity(t) {
  */
 export function split(items, chunkSize, mapper = identity) {
   return items.reduce(
-    /** @param { { chunks: U[], buffer: T[] } } */
+    /** @param { { chunks: U[], buffer: T[] } } acc @param { T } item */
     ({ chunks, buffer }, item) =>
       buffer.push(item) && (buffer.length === chunkSize)
         ? { chunks: [...chunks, mapper(buffer)], buffer: []}

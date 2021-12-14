@@ -46,7 +46,7 @@ function findPaths(visits, from, path, mayRevisit) {
   return CONNEXIONS[from]
     .filter(next => isLarge(next) || (visits[next] < 1 + +mayRevisit))
     .flatMap(next => findPaths(
-      mapValues(visits, (name, count) => count + +(name === next)),
+      mapValues(visits, (count, name) => count + +(name === next)),
       next,
       [...path, next],
       mayRevisit && (isLarge(next) || visits[next] === 0),
