@@ -10,7 +10,7 @@ const [dots, folds] = (function (input) {
     dots.map(line => line.split(/,/).map(Number)),
     instructions.map(line => mapValues(
       /(?<axis>[xy])=(?<at>\d+)/.exec(line).groups,
-      (k, v) => k === 'at' ? Number(v) : v,
+      (v, k) => k === 'at' ? Number(v) : v,
     )),
   ];
 }(getInput(import.meta.url)));
@@ -35,9 +35,9 @@ function fold(dots, { axis, at }) {
   return new Set(
     [...dots.values()]
       .map(xy)
-      .map(xy => [xy[+(axis !== 'y')], xy[+(axis === 'y')]])
-      .map(([keep, change]) => change >= at ? [keep, 2 * at - change] : [keep, change])
-      .map(([kept, changed]) => axis === 'y' ? [kept, changed] : [changed, kept])
+      .map(([x, y]) => axis === 'x' ? [x, y] : [y, x])
+      .map(([alter, retain]) => [alter > at ? 2 * at - alter : alter, retain])
+      .map(([altered, retained]) => axis === 'x' ? [altered, retained] : [retained, altered])
       .map(i)
   );
 }
