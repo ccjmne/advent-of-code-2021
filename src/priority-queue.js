@@ -31,10 +31,10 @@ export default class PriorityQueue {
     return sum(Object.values(this.buckets), ({ size }) => size);
   }
 
-  // TODO: implement dequeueing MAX-priority first
-  /** @returns { T | null } */
-  dequeue() {
-    const b = this.buckets[this.priorities[0]];
+  /** @param { boolean? } largest @returns { T | null } */
+  dequeue(largest = false) {
+    const i = largest ? this.priorities.length - 1 : 0;
+    const b = this.buckets[this.priorities[i]];
     if (!b) {
       return null;
     }
@@ -42,16 +42,24 @@ export default class PriorityQueue {
     const next = b.values().next().value;
     b.delete(next);
     if (!b.size) {
-      delete this.buckets[this.priorities[0]];
-      this.priorities.splice(0, 1);
+      delete this.buckets[this.priorities[i]];
+      this.priorities.splice(i, 1);
     }
 
     return next;
   }
 
-  /** @param { number } priority @param { number? } lo @param { number? } hi @returns { Set<number> } */
+  /** @param { number } priority @param { number? } lo @param { number? } hi @returns { Set<T> } */
   bucket(priority, lo = 0, hi = this.priorities.length) {
-    const m = Math.floor((hi + lo) / 2);
+    /**
+     * Equivalent to `Math.floor((hi + lo) / 2)`
+     * because bitwise operations cast `number`s into integers.
+     *
+     * (That is, if the JIT already hadn't figured these numbers
+     * were never used in way that would require to switch to/enable
+     * a floating-point format)
+     */
+    const m = (hi + lo) >> 1;
     const p = this.priorities[m];
 
     if (priority === p) {
@@ -66,6 +74,23 @@ export default class PriorityQueue {
     return priority < p
       ? this.bucket(priority, lo, m)
       : this.bucket(priority, m + 1, hi);
+  }
+
+  /**
+   * @param { number } priority @returns { Set<T> }
+   * @deprecated
+   *
+   * Alternative implementation that should be significantly
+   * faster if JS Arrays were implemented as Linked-Lists.
+   */
+  bucket_alt(priority) {
+    const i = this.priorities.findIndex(p => p >= priority);
+    if (this.priorities[i] !== priority) {
+      this.priorities.splice(i, 0, priority);
+      this.buckets[priority] = new Set();
+    }
+
+    return this.buckets[priority];
   }
 
 }
