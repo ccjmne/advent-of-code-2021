@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 
 import { SolutionModule } from 'src/solution-module';
-import { style, Styles } from 'src/utils';
+import { style, Styles } from 'src/tsutils';
 
 /* eslint-disable no-console */
 /* eslint-disable no-bitwise */
