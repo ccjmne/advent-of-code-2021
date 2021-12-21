@@ -38,6 +38,7 @@ module.exports = {
     },
     ...{
       // inline spacing
+      'object-curly-spacing': 'off',
       '@typescript-eslint/object-curly-spacing': ['warn', 'always'],
       '@typescript-eslint/type-annotation-spacing': ['warn'],
     },
