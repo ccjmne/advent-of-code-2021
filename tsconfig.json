@@ -1,0 +1,26 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["./node_modules/@types/*"], // to avoid looking into node_modules/@types/d3-selection-multi/node_modules/@types/d3-selection/index.d.ts
+      "src/*": ["./src/*"],
+      "webpack": ["./node_modules/webpack"] // together with es-interop
+    },
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "target": "esnext",
+    "preserveConstEnums": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "lib": ["DOM", "ESNext"],
+  },
+  "include": [".eslintrc.js", "**/*"],
+  "exclude": ["node_modules", "dist"]
+}
