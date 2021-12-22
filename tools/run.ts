@@ -30,8 +30,8 @@ console.info(
 );
 
 try {
-  const { default: { parse, partI, partII } } = await import(`/src/${y}/${d}/${d}`) as ESModule<SolutionModule<unknown>>;
-  const { default: data } = await import(`/src/${y}/${d}/input`) as ESModule<string>;
+  const { default: { parse, partI, partII } } = await import(/* webpackMode: 'eager' */`/src/${y}/${d}/${d}`) as ESModule<SolutionModule<unknown>>;
+  const { default: data } = await import(/* webpackMode: 'eager' */`/src/${y}/${d}/input`) as ESModule<string>;
 
   const input = parse(data);
   const I = partI(input);
