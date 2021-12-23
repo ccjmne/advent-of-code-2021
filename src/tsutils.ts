@@ -1,5 +1,8 @@
 import { isNotNil, Maybe } from './maybe';
 
+type _TupleOf<T, N extends number, R extends unknown[]> = R['length'] extends N ? R : _TupleOf<T, N, [T, ...R]>;
+export type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : { length: N } & _TupleOf<T, N, []> : never;
+
 export function range(length: number, { offset = 0, step = 1 }: { offset?: number, step?: number } = {}): number[] {
   return Array.from({ length }, (_, i) => offset + i * step);
 }
@@ -43,6 +46,14 @@ export function aggregate<T, V = T[]>(
   );
 }
 
+export function zip<T>(a: T[], b: T[]): ReadonlyArray<[T, T]> {
+  if (a.length !== b.length) {
+    throw new Error(`Expected arrays to be of equal length. ${a.length} !== ${b.length}`);
+  }
+
+  return a.map((t, i) => [t, b[i]]);
+}
+
 export function occurrences<T>(
   items: T[],
   by: (item: T) => string = identity,
@@ -68,6 +79,11 @@ export function count<T>(items: T[], when: (item: T) => boolean): number {
 
 export function mapFind<T, R>(items: T[], map: (t: T) => R, find: (r: R) => boolean = isNotNil): Maybe<R> {
   return items.reduce((r, t) => r ?? (rt => (find(rt) ? rt : null))(map(t)), null);
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function memoize<T extends Function>(f: T, mem = new Map()): T {
+  return ((...args) => (k => (mem.has(k) || mem.set(k, f(...args))) && mem.get(k))(JSON.stringify(args))) as unknown as T;
 }
 
 /* eslint-disable max-len */
