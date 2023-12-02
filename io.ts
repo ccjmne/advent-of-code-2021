@@ -1,11 +1,7 @@
-/* eslint-disable no-console */
-import { readFile, writeFile } from 'fs/promises'
 import { formatWithOptions } from 'util'
 
 import colours, { type Color } from '@colors/colors'
-import { BehaviorSubject, filter, map, take, withLatestFrom, type Observable, concatMap, delayWhen, of, Subject, distinctUntilChanged, distinctUntilKeyChanged, combineLatestWith, from, catchError, switchMap } from 'rxjs'
-
-import watch from 'tools/watch'
+import { BehaviorSubject, filter, map, take, withLatestFrom, type Observable } from 'rxjs'
 
 import { Status, type WorkerEvent } from './do-run'
 import Prompt from './tools/prompt'
@@ -80,6 +76,7 @@ function getPartOutput([status,, data]: WorkerEvent): unknown | unknown[] {
 }
 
 export function printSolution(year: number, day: number, I: WorkerEvent, II: WorkerEvent, runI: boolean, runII: boolean): void {
+  // eslint-disable-next-line no-console
   console.log([ // buffer output to avoid jumpy prompt
     '\u001Bc', // clear screen
     makeHeader(year, day),

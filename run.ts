@@ -75,8 +75,8 @@ const input$ = opts.pipe(
 )
 
 combineLatest([
-  getResult(year, day, 'partI', opts, input$),
-  getResult(year, day, 'partII', opts, input$),
+  getResult(year, day, 'partI', opts.pipe(map(({ partI }) => partI)), input$),
+  getResult(year, day, 'partII', opts.pipe(map(({ partII }) => partII)), input$),
 ]).pipe(
   combineLatestWith(opts),
   watch ? identity : takeWhile(([[[I], [II]]]) => ![I, II].every(status => [Status.DONE, Status.ERROR].includes(status)), true),
