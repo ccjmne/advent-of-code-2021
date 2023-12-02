@@ -74,6 +74,7 @@ export function getResult(
   ).subscribe(event$)
 
   return event$.pipe(
+    startWith([Status.RESPAWNING]),
     map(([status, data]) => [status, process.hrtime(), data] as const),
     pairwise(),
     // if DONE or ERROR, compute elapsed time since previous event; otherwise, compute elapsed time in the current state
