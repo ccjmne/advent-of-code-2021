@@ -1,4 +1,4 @@
-import { BehaviorSubject, EMPTY, Subject, catchError, combineLatestWith, concat, defer, distinctUntilKeyChanged, filter, from, interval, map, mergeWith, of, pairwise, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
+import { BehaviorSubject, EMPTY, Subject, catchError, combineLatestWith, concat, defer, distinctUntilKeyChanged, filter, from, interval, map, mergeWith, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
 import { spawn, type SpawnedWorker } from 'threads-esm'
 
 import watch from './tools/watch'
@@ -36,11 +36,8 @@ export function getResult(
     switchMap(() => concat(of(null), from(spawn<WorkerModule>(new URL('./worker.ts', import.meta.url))))),
   ).subscribe(worker$)
 
-  let first = true
-
-  // Equivalent to `startWith(Symbol('INIT'))` the first time this stream is subscribed to,
-  // but not on subsequent subscriptions (i.e.: when recovering from an error)
-  defer(() => (first ? of(Symbol('INIT')).pipe(tap(() => first = false)) : EMPTY)).pipe(
+  of(null).pipe(
+    share({ resetOnComplete: false }), // no initial event on subsequent subscriptions, i.e. when recovering from an error
     // on code changes, while "run part" is true
     mergeWith(
       watch(`./src/${year}/${day}/*.ts`),
