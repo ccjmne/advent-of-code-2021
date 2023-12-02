@@ -6,6 +6,7 @@
     "paths": {
       "*": ["./node_modules/@types/*"], // to avoid looking into node_modules/@types/d3-selection-multi/node_modules/@types/d3-selection/index.d.ts
       "src/*": ["./src/*"],
+      "tools/*": ["./tools/*"],
       "webpack": ["./node_modules/webpack"] // together with es-interop
     },
     "module": "esnext",
@@ -19,8 +20,14 @@
     "preserveConstEnums": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "ESNext"]
   },
-  "include": [".eslintrc.js", "**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [".eslintrc.cjs", "**/*"],
+  "exclude": ["node_modules", "dist"],
+  "ts-node": {
+    "esm": true,
+    "loader": "./tools/loader.js",
+    "experimentalResolver": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

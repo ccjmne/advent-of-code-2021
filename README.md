@@ -1,29 +1,29 @@
-# advent-of-code-2021
+# advent-of-code
 My entries for https://adventofcode.com! 🥳
 
 ## Usage
 
-Install:
-```shell
-npm install
+### Run once
+
+```sh
+npm run once             -- [-y,--year] [-d,--day <day>]
 ```
 
-Watch-build code:
-```shell
-npm run dev:build
+### Dev mode
+
+```sh
+npm run dev              -- [-y,--year] [-d,--day <day>] 
+
+# or, when making changes outside of the daily TS file
+npm run dev:full-rebuild -- [-y,--year] [-d,--day <day>] 
 ```
 
-Watch-run built code:
-```shell
-npm run dev:run          [-y,--year <year>] [-d,--day <day>]
-# or
-nodemon --quiet dist/run [-y,--year <year>] [-d,--day <day>]
-```
+### Prepare input and TS code
 
-Run solution:
+```sh
+tools/prepare.sh [-f]
+# -f to re-download of input even when the file already exists
 ```
-# or
-node dist/run            [-y,--year <year>] [-d,--day <day>]
-# or
-dist/run.js              [-y,--year <year>] [-d,--day <day>]
-```
+> requires the value of your `session` cookie in `tools/.session`
+
+> automatically ran by `npm run dev[:full-rebuild]`

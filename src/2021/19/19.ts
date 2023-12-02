@@ -1,6 +1,6 @@
 import { hasKey, isNotNil, Maybe } from 'src/maybe';
 import solution from 'src/solution-module';
-import { mapFind, max, occurrences } from 'src/tsutils';
+import { mapFind, occurrences } from 'src/tsutils';
 
 type Vector3 = [number, number, number];
 const ROTATIONS: ReadonlyArray<(v: Vector3) => Vector3> = [
@@ -96,7 +96,7 @@ export default solution({
   partII(input: ScannerReport[]) {
     const { refs, ooReach: isolated } = solve({ todo: input.slice(1), refs: input.slice(0, 1), ooReach: [] });
     const scanners = [...refs, ...isolated];
-    return max(scanners
+    return Math.max(...scanners
       .flatMap((l, i) => scanners.slice(i + 1).map(r => [l, r]))
       .map(([{ at: [x, y, z] }, { at: [i, j, k] }]) => Math.abs(i - x) + Math.abs(j - y) + Math.abs(k - z)));
   },

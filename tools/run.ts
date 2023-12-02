@@ -1,7 +1,7 @@
-import yargs from 'yargs';
+import yargs from 'yargs'
 
-import { SolutionModule } from 'src/solution-module';
-import { style, Styles } from 'src/tsutils';
+import { type SolutionModule } from 'src/solution-module'
+import { style, Styles } from 'src/tsutils'
 
 /* eslint-disable no-console */
 /* eslint-disable no-bitwise */
@@ -19,31 +19,31 @@ const { y, d } = await yargs(process.argv)
   })
   .help(false)
   .version(false)
-  .argv;
+  .argv
 
-type ESModule<T> = { default: T };
+type ESModule<T> = { default: T }
 
-console.info(
-  '\n'.padStart(80, '-'),
-  `AoC ${style(String(y), Styles.BRIGHT)} • day ${style(String(d), Styles.BRIGHT)}`,
-  '\n'.padEnd(80, '-'),
-);
+console.info('-'.repeat(80))
+console.info(`AoC ${style(String(y), Styles.BRIGHT)} • day ${style(String(d), Styles.BRIGHT)}`)
+console.info(style('-'.repeat(80), Styles.DIM))
 
 try {
-  const { default: { parse, partI, partII } } = await import(`/src/${y}/${d}/${d}`) as ESModule<SolutionModule<unknown>>;
-  const { default: data } = await import(`/src/${y}/${d}/input`) as ESModule<string>;
+  const { default: { parse, partI, partII, mutatesInput } } = await import(`src/${y}/${d}/${d}`) as ESModule<SolutionModule<unknown>>
+  const { default: data } = await import(`src/${y}/${d}/input`) as ESModule<string>
 
-  const input = parse(data);
-  const I = partI(input);
-  console.log('Part I:', ...(Array.isArray(I) ? I : [I]));
-  const II = partII(input);
-  console.log('Part II:', ...(Array.isArray(II) ? II : [II]));
+  const input = parse(data)
+  console.log('Part I:', ...[partI(input)].flat())
+  console.log('Part II:', ...[partII(mutatesInput ? parse(data) : input)].flat())
 } catch (_) {
   console.error(
-    style(`Unable to run solution for:`, Styles.RED | Styles.BRIGHT), { year: y, day: d },
-    style(`\nExpected implementation in:`, Styles.RED | Styles.BRIGHT), `/src/${y}/${d}/${d}.ts`,
-    style(`\n         Expected input in:`, Styles.RED | Styles.BRIGHT), `/src/${y}/${d}/input`,
-  );
+    style('Unable to run solution for:', Styles.RED | Styles.BRIGHT),
+    { year: y, day: d },
+    style('\nExpected implementation in:', Styles.RED | Styles.BRIGHT),
+    `src/${y}/${d}/${d}.ts`,
+    style('\n         Expected input in:', Styles.RED | Styles.BRIGHT),
+    `src/${y}/${d}/input`,
+  )
 
-  console.error('\n'.padStart(80, '-'), _);
+  console.error(style('-'.repeat(80), Styles.DIM))
+  console.error(_)
 }

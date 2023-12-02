@@ -1,6 +1,6 @@
 import { forSure } from 'src/maybe';
 import solution from 'src/solution-module';
-import { max, min, sum } from 'src/tsutils';
+import { sum } from 'src/tsutils';
 
 function mod1(mod: number, n: number): number {
   return ((n - 1) % mod) + 1;
@@ -55,10 +55,10 @@ export default solution({
       roll += 3;
     }
 
-    return min(scores) * roll;
+    return Math.min(...scores) * roll;
   },
 
   partII(players: [number, number]): number {
-    return max(victories(players, [0, 0], 0));
+    return Math.max(...victories(players, [0, 0], 0));
   },
 });
