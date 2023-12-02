@@ -1,20 +1,14 @@
-import { BehaviorSubject, EMPTY, Subject, catchError, combineLatestWith, concat, defer, distinctUntilKeyChanged, filter, from, interval, map, mergeWith, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
+import { BehaviorSubject, EMPTY, Subject, catchError, combineLatestWith, concat, filter, from, interval, map, mergeWith, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
 import { spawn, type SpawnedWorker } from 'threads-esm'
 
 import watch from './tools/watch'
 import { type WorkerModule } from './worker'
 
-export enum Status {
-  RESPAWNING,
-  COMPUTING,
-  DONE,
-  ERROR,
-}
-
+export enum Status { RESPAWNING, COMPUTING, DONE, ERROR }
 export type WorkerEvent = readonly [status: Status, duration: number, data?: unknown]
 
 function toSeconds([s, ns]: [seconds: number, nanoseconds: number]): number {
-  return (s + ns / 1_000_000_000)
+  return s + ns / 1_000_000_000
 }
 
 export function getResult(
@@ -24,11 +18,11 @@ export function getResult(
   run$: Observable<boolean>,
   input$: Observable<string>,
 ): Observable<WorkerEvent> {
-  const event$: Subject<readonly [status: Status, data?: unknown]> = new BehaviorSubject([Status.DONE])
-  const terminateWorker$ = new Subject<true>()
+  const event$: Subject<readonly [status: Status, data?: unknown]> = new BehaviorSubject([Status.RESPAWNING])
+  const respawn$ = new Subject<true>()
   const worker$ = new Subject<SpawnedWorker<WorkerModule> | null>()
 
-  terminateWorker$.pipe(
+  respawn$.pipe(
     withLatestFrom(worker$),
     filter((([, worker]) => worker !== null)),
     tap(([, worker]) => { void worker!.terminate() }),
@@ -38,11 +32,12 @@ export function getResult(
 
   of(null).pipe(
     share({ resetOnComplete: false }), // no initial event on subsequent subscriptions, i.e. when recovering from an error
+  ).pipe( // no more than 9 operators per pipe before losing type inference
     // on code changes, while "run part" is true
     mergeWith(
       watch(`./src/${year}/${day}/*.ts`),
       // respawn worker on changes to other pars of the codebase, to override module caching
-      watch('./src', { ignored: `./src/${year}/${day}` }).pipe(tap(() => terminateWorker$.next(true))),
+      watch('./src', { ignored: `./src/${year}/${day}` }).pipe(tap(() => respawn$.next(true))),
     ),
     withLatestFrom(run$),
     filter(([, runPart]) => runPart),
@@ -53,11 +48,11 @@ export function getResult(
       filter(([prev, cur]) => !prev && cur),
     )),
 
-    // terminate ongoing computation if necessary
+    // terminate current worker thread if computation is still ongoing
     withLatestFrom(event$),
     tap(([, [status]]) => {
       if (status === Status.COMPUTING) {
-        terminateWorker$.next(true)
+        respawn$.next(true)
       }
     }),
 
@@ -70,23 +65,22 @@ export function getResult(
         startWith([Status.COMPUTING] as const),
       ))),
 
-    distinctUntilKeyChanged(0), // element 0 is the status
-
+    // restart worker thread on error and push ERROR event before resuming
     catchError((error, caught) => {
-      terminateWorker$.next(true)
+      respawn$.next(true)
 
       return concat(of([Status.ERROR, error] as const), caught)
     }),
   ).subscribe(event$)
 
   return event$.pipe(
-    // add elapsed time info
     map(([status, data]) => [status, process.hrtime(), data] as const),
     pairwise(),
+    // if DONE or ERROR, compute elapsed time since previous event; otherwise, compute elapsed time in the current state
     map(([[, start], [status, at, data]]) => [status, [Status.DONE, Status.ERROR].includes(status) ? start : at, data] as const),
-    switchMap(([status, start, data]) => ([Status.RESPAWNING, Status.COMPUTING].includes(status)
-      ? interval(47).pipe(startWith(0))
-      : of(0)
-    ).pipe(map(() => [status, toSeconds(process.hrtime(start)), data] as const))),
+    switchMap(([status, start, data]) => ([Status.RESPAWNING, Status.COMPUTING].includes(status) ? interval(47) : EMPTY).pipe(
+      startWith(null),
+      map(() => [status, toSeconds(process.hrtime(start)), data] as const),
+    )),
   )
 }
