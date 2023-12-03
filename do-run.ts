@@ -1,4 +1,4 @@
-import { BehaviorSubject, EMPTY, Subject, asapScheduler, catchError, combineLatestWith, concat, distinctUntilKeyChanged, filter, from, interval, map, mergeWith, observeOn, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
+import { BehaviorSubject, EMPTY, Subject, asapScheduler, catchError, combineLatestWith, concat, distinctUntilChanged, distinctUntilKeyChanged, filter, from, interval, map, merge, observeOn, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
 import { spawn, type SpawnedWorker } from 'threads-esm'
 
 import watch from './tools/watch'
@@ -30,22 +30,16 @@ export function getResult(
     switchMap(() => concat(of(null), from(spawn<WorkerModule>(new URL('./worker.ts', import.meta.url))))),
   ).subscribe(worker$)
 
-  of(null).pipe(
-    // on code/input changes, while "run part" is true
-    mergeWith(
-      input$.pipe(observeOn(asapScheduler)), // trigger input-based recompute ASAP *after* having taken into account the new input w/ `withLatestFrom`
+  run$.pipe( // this first pipe decides when to compute
+    distinctUntilChanged(),
+
+    switchMap(run => (run ? merge(
+      // trigger input-based recomputations ASAP *after* having taken into account the new input w/ `withLatestFrom` in the computing pipe
+      input$.pipe(observeOn(asapScheduler)),
       watch(`./src/${year}/${day}/*.ts`),
       // respawn worker on changes to other pars of the codebase, to override module caching
       watch('./src', { ignored: `./src/${year}/${day}` }).pipe(tap(() => respawn$.next(true))),
-    ),
-    withLatestFrom(run$),
-    filter(([, runPart]) => runPart),
-
-    // or when "run part" switches from `false` to `true`
-    mergeWith(run$.pipe(
-      pairwise(),
-      filter(([prev, cur]) => !prev && cur),
-    )),
+    ) : EMPTY)),
 
     // terminate current worker thread if computation is still ongoing
     withLatestFrom(event$),
@@ -55,10 +49,9 @@ export function getResult(
       }
     }),
 
-    share({ resetOnRefCountZero: false }), // when recovering from an error, a worker respawn alone shall not be enough to trigger a re-computation
-  ).pipe( // no more than 9 operators per pipe before losing type analysis
-    // compute solution
-    combineLatestWith(worker$), // re-compute when worker respawns
+    share({ resetOnRefCountZero: false }), // when recovering from an error, a worker respawn alone shall not be enough to trigger a new computation
+  ).pipe( // this second pipe computes the solution
+    combineLatestWith(worker$), // recompute when worker respawns
     withLatestFrom(input$),
     switchMap(([[, worker], input]) => (worker === null
       ? of([Status.RESPAWNING] as const)
