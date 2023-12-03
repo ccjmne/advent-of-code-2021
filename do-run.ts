@@ -1,4 +1,4 @@
-import { BehaviorSubject, EMPTY, Subject, catchError, combineLatestWith, concat, distinctUntilKeyChanged, filter, from, interval, map, mergeWith, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
+import { BehaviorSubject, EMPTY, Subject, asapScheduler, catchError, combineLatestWith, concat, distinctUntilKeyChanged, filter, from, interval, map, mergeWith, observeOn, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
 import { spawn, type SpawnedWorker } from 'threads-esm'
 
 import watch from './tools/watch'
@@ -33,7 +33,7 @@ export function getResult(
   of(null).pipe(
     // on code/input changes, while "run part" is true
     mergeWith(
-      input$,
+      input$.pipe(observeOn(asapScheduler)), // trigger input-based recompute ASAP *after* having taken into account the new input w/ `withLatestFrom`
       watch(`./src/${year}/${day}/*.ts`),
       // respawn worker on changes to other pars of the codebase, to override module caching
       watch('./src', { ignored: `./src/${year}/${day}` }).pipe(tap(() => respawn$.next(true))),
