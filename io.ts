@@ -6,7 +6,7 @@ import { BehaviorSubject, filter, map, take, withLatestFrom, type Observable } f
 import { Status, type WorkerEvent } from './do-run'
 import Prompt from './tools/prompt'
 
-const { bold, dim, yellow, red, green, blue, white, grey } = colours
+const { bold, yellow, red, green, blue, white, grey } = colours
 export type Options = { input: boolean, partI: boolean, partII: boolean }
 
 // TODO: Should only be used in here
@@ -34,21 +34,22 @@ export function listen(prompt: Prompt): Observable<Options> {
     })),
   ).subscribe(opts)
 
-  opts.subscribe(({ input, partI, partII }) => prompt.refresh(
-    `\n${dim('─'.repeat(process.stdout.columns))}\nPress `
-    + `[${blue('t')}]: use ${colours.bold(input ? 'test' : 'real')} input, `
-    + `[${blue('1')}]: ${colours.bold(partI ? 'disable' : 'enable')} part I, `
-    + `[${blue('2')}]: ${colours.bold(partII ? 'disable' : 'enable')} part II, `
+  opts.subscribe(() => prompt.refresh(
+    `\n${grey('─'.repeat(process.stdout.columns))}\nPress `
+    + `[${blue('t')}]: switch ${('input')}, `
+    + `[${blue('1')}|${blue('2')}]: toggle ${('part I')} or ${('II')}, `
     + `[${blue('q')}]: quit`,
   ))
 
   return opts.asObservable()
 }
 
-function makeHeader(year: number, day: number): string {
+function makeHeader(year: number, day: number, input: boolean): string {
   const [top, bottom] = [[green('✦'), '❖', red('─'), '─'], ['❖', green('✦'), '─', red('─')]]
+  const source = input ? 'personalised' : 'test'
+
   return `┌${top.join('').repeat(2)}❄${[...top].reverse().join('').repeat(2)}┐\n`
-  + `${green('│')} AoC ${bold(String(year))}${' '.repeat(3 - String(day).length)}day ${bold(String(day))} ${green('│')}\n`
+  + `${green('│')} AoC ${bold(String(year))}${' '.repeat(3 - String(day).length)}day ${bold(String(day))} ${green('│')}${' '.repeat(23 - source.length)}${grey(`> using ${white(source)} input <`)}\n`
   + `└${bottom.join('').repeat(2)}✦${[...bottom].reverse().join('').repeat(2)}┘`
 }
 
@@ -61,25 +62,25 @@ function makeTitleBar(title: string, [status, elapsed]: WorkerEvent): string {
   }[status] as [string, string, Color]
 
   return colour(`\n${title
-  } ${'─'.repeat(30 - title.length - info.length - preposition.length - elapsed.toFixed(3).length)}┤ ${
-    white(`${info} ${dim(preposition)} ${elapsed.toFixed(3)}s`)
-  } ├${'─'.repeat(process.stdout.columns - 30 - 8)}`)
+  } ${'─'.repeat(50 - title.length - info.length - preposition.length - elapsed.toFixed(3).length)}┤ ${
+    white(`${info} ${grey(preposition)} ${elapsed.toFixed(3)}s`)
+  } ├${'─'.repeat(process.stdout.columns - 50 - 8)}`)
 }
 
 function getPartOutput([status,, data]: WorkerEvent): unknown | unknown[] {
   return {
-    [Status.RESPAWNING]: dim('...'),
-    [Status.COMPUTING]: dim('...'),
+    [Status.RESPAWNING]: grey('...'),
+    [Status.COMPUTING]: grey('...'),
     [Status.DONE]: data,
     [Status.ERROR]: data,
   }[status]
 }
 
-export function printSolution(year: number, day: number, I: WorkerEvent, II: WorkerEvent, runI: boolean, runII: boolean): void {
+export function printSolution(year: number, day: number, input: boolean, I: WorkerEvent, II: WorkerEvent, runI: boolean, runII: boolean): void {
   // eslint-disable-next-line no-console
   console.log([ // buffer output to avoid jumpy prompt
     '\u001Bc', // clear screen
-    makeHeader(year, day),
+    makeHeader(year, day, input),
     ...(runI ? [makeTitleBar('Part I', I), formatWithOptions({ colors: true }, ...[getPartOutput(I)].flat())] : []),
     ...(runII ? [makeTitleBar('Part II', II), formatWithOptions({ colors: true }, ...[getPartOutput(II)].flat())] : []),
   ].join('\n'))

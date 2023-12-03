@@ -81,4 +81,4 @@ combineLatest([
   combineLatestWith(opts),
   watch ? identity : takeWhile(([[[I], [II]]]) => ![I, II].every(status => [Status.DONE, Status.ERROR].includes(status)), true),
   finalize(() => process.exit(0)),
-).subscribe(([[I, II], { partI: runI, partII: runII }]) => printSolution(year, day, I, II, runI, runII))
+).subscribe(([[I, II], { partI: runI, partII: runII, input }]) => printSolution(year, day, input, I, II, runI, runII))
