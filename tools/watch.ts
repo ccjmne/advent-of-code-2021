@@ -13,6 +13,7 @@ export default function watch(
     return merge(
       fromEvent(watcher, 'add'),
       fromEvent(watcher, 'change'),
+      fromEvent(watcher, 'unlink'),
     ).subscribe(subscriber).add(() => { void watcher.close() })
   }).pipe(share())
 }
