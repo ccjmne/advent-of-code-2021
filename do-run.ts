@@ -20,7 +20,7 @@ export function getResult(
 ): Observable<WorkerEvent> {
   const event$: Subject<readonly [status: Status, data?: unknown]> = new BehaviorSubject([Status.RESPAWNING])
   const respawn$ = new Subject<true>()
-  const worker$ = new Subject<SpawnedWorker<WorkerModule> | null>()
+  const worker$ = new BehaviorSubject<SpawnedWorker<WorkerModule> | null>(null)
 
   respawn$.pipe(
     withLatestFrom(worker$),
