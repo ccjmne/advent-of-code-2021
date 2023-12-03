@@ -6,7 +6,7 @@ import { BehaviorSubject, filter, map, take, withLatestFrom, type Observable } f
 import { Status, type WorkerEvent } from './do-run'
 import Prompt from './tools/prompt'
 
-const { bold, dim, yellow, red, green, blue, white } = colours
+const { bold, dim, yellow, red, green, blue, white, grey } = colours
 export type Options = { input: boolean, partI: boolean, partII: boolean }
 
 // TODO: Should only be used in here
@@ -54,7 +54,7 @@ function makeHeader(year: number, day: number): string {
 
 function makeTitleBar(title: string, [status, elapsed]: WorkerEvent): string {
   const [info, preposition, colour] = {
-    [Status.RESPAWNING]: ['respawning', 'for', dim],
+    [Status.RESPAWNING]: ['respawning', 'for', grey],
     [Status.COMPUTING]: ['computing', 'for', yellow],
     [Status.DONE]: ['done', 'in', green],
     [Status.ERROR]: ['failed', 'after', red],
