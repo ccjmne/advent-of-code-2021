@@ -26,15 +26,14 @@ export function getResult(
     withLatestFrom(worker$),
     filter((([, worker]) => worker !== null)),
     tap(([, worker]) => { void worker!.terminate() }),
-    startWith(true),
+    startWith(null),
     switchMap(() => concat(of(null), from(spawn<WorkerModule>(new URL('./worker.ts', import.meta.url))))),
   ).subscribe(worker$)
 
   of(null).pipe(
-    share({ resetOnComplete: false }), // no initial event on subsequent subscriptions, i.e. when recovering from an error
-  ).pipe( // no more than 9 operators per pipe before losing type inference
-    // on code changes, while "run part" is true
+    // on code/input changes, while "run part" is true
     mergeWith(
+      input$,
       watch(`./src/${year}/${day}/*.ts`),
       // respawn worker on changes to other pars of the codebase, to override module caching
       watch('./src', { ignored: `./src/${year}/${day}` }).pipe(tap(() => respawn$.next(true))),
@@ -56,9 +55,12 @@ export function getResult(
       }
     }),
 
+    share({ resetOnRefCountZero: false }), // when recovering from an error, a worker respawn alone shall not be enough to trigger a re-computation
+  ).pipe( // no more than 9 operators per pipe before losing type analysis
     // compute solution
-    combineLatestWith(worker$, input$),
-    switchMap(([, worker, input]) => (worker === null
+    combineLatestWith(worker$), // re-compute when worker respawns
+    withLatestFrom(input$),
+    switchMap(([[, worker], input]) => (worker === null
       ? of([Status.RESPAWNING] as const)
       : from(worker.process(year, day, part, input)).pipe(
         map(result => [Status.DONE, result] as const),
