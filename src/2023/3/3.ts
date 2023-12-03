@@ -1,4 +1,4 @@
-import { bufferCount, endWith, filter, firstValueFrom, from, map, mergeMap, reduce, skipLast, startWith, type Observable } from 'rxjs'
+import { bufferCount, endWith, filter, from, map, mergeMap, reduce, skipLast, startWith, type Observable } from 'rxjs'
 
 import solution from 'src/solution-module'
 
@@ -24,20 +24,20 @@ export default solution({
   },
 
   partI(input) {
-    return firstValueFrom(input.pipe(
+    return input.pipe(
       map(([pre, cur, post]) => [cur.numbers, [pre, cur, post].flatMap(({ symbols }) => symbols)]),
       mergeMap(([numbers, symbols]) => numbers.filter(num => symbols.some(sym => touches(num, sym)))),
       reduce((sum, next) => sum + Number(next), 0),
-    ))
+    )
   },
 
   partII(input) {
-    return firstValueFrom(input.pipe(
+    return input.pipe(
       map(([pre, cur, post]) => [cur.symbols.filter(sym => sym[0] === '*'), [pre, cur, post].flatMap(({ numbers }) => numbers)]),
       mergeMap(([gears, numbers]) => gears.map(sym => numbers.filter(num => touches(sym, num)))),
       filter(({ length }) => length === 2),
       map(([a, b]) => Number(a) * Number(b)),
       reduce((sum, next) => sum + next),
-    ))
+    )
   },
 })
