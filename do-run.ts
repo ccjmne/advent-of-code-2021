@@ -1,4 +1,4 @@
-import { BehaviorSubject, EMPTY, Subject, catchError, combineLatestWith, concat, filter, from, interval, map, mergeWith, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
+import { BehaviorSubject, EMPTY, Subject, catchError, combineLatestWith, concat, distinctUntilKeyChanged, filter, from, interval, map, mergeWith, of, pairwise, share, startWith, switchMap, tap, withLatestFrom, type Observable } from 'rxjs'
 import { spawn, type SpawnedWorker } from 'threads-esm'
 
 import watch from './tools/watch'
@@ -73,6 +73,8 @@ export function getResult(
 
       return concat(of([Status.ERROR, error] as const), caught)
     }),
+
+    distinctUntilKeyChanged(0), // the element at 0 is the status
   ).subscribe(event$)
 
   return event$.pipe(
