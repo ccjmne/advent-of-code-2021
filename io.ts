@@ -7,7 +7,7 @@ import { Status, type WorkerEvent } from './do-run'
 import Prompt from './tools/prompt'
 
 const { bold, yellow, red, green, blue, white, grey } = colours
-export type Options = { input: boolean, partI: boolean, partII: boolean }
+export type Options = { input: boolean, partI: boolean, partII: boolean, year: number, day: number }
 
 // TODO: Should only be used in here
 export function getPrompt(): Prompt {
@@ -21,23 +21,35 @@ export function getPrompt(): Prompt {
 }
 
 // TODO: should call getPrompt itself
-export function listen(prompt: Prompt): Observable<Options> {
-  const opts = new BehaviorSubject<Options>({ input: true, partI: true, partII: true })
+export function listen(prompt: Prompt, options: Options): Observable<Options> {
+  const opts = new BehaviorSubject<Options>(options)
 
   prompt.keyPresse$.pipe(
     withLatestFrom(opts),
-    map(([{ name }, { input, partI, partII }]) => ({
+    map(([{ name }, { input, partI, partII, year, day }]) => ({
       input,
       partI,
       partII,
-      ...{ 1: { partI: !partI }, 2: { partII: !partII }, t: { input: !input } }[name],
+      year,
+      day,
+      ...{
+        1: { partI: !partI },
+        2: { partII: !partII },
+        j: { day: day === 25 ? 1 : day + 1, year: day === 25 ? year + 1 : year },
+        k: { day: day === 1 ? 25 : day - 1, year: day === 1 ? year - 1 : year },
+        h: { year: year - 1 },
+        l: { year: year + 1 },
+        t: { input: !input },
+      }[name],
     })),
   ).subscribe(opts)
 
   opts.subscribe(() => prompt.refresh(
     `\n${grey('─'.repeat(process.stdout.columns))}\nPress `
     + `[${blue('t')}]: switch ${('input')}, `
-    + `[${blue('1')}|${blue('2')}]: toggle ${('part I')} or ${('II')}, `
+    + `[${blue('1')}|${blue('2')}]: toggle part I or II, `
+    + `[${blue('j')}|${blue('k')}]: navigate days, `
+    + `[${blue('h')}|${blue('l')}]: navigate years, `
     + `[${blue('q')}]: quit`,
   ))
 
@@ -46,7 +58,7 @@ export function listen(prompt: Prompt): Observable<Options> {
 
 function makeHeader(year: number, day: number, input: boolean): string {
   const [top, bottom] = [[green('✦'), '❖', red('─'), '─'], ['❖', green('✦'), '─', red('─')]]
-  const source = input ? 'personalised' : 'test'
+  const source = input ? 'actual' : 'test'
 
   return `┌${top.join('').repeat(2)}❄${[...top].reverse().join('').repeat(2)}┐\n`
   + `${green('│')} AoC ${bold(String(year))}${' '.repeat(3 - String(day).length)}day ${bold(String(day))} ${green('│')}${' '.repeat(23 - source.length)}${grey(`> using ${white(source)} input <`)}\n`
