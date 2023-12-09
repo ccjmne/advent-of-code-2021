@@ -4,7 +4,7 @@ eslint \
 eslint-config-airbnb-base \
 eslint-config-airbnb-typescript \
 @typescript-eslint/eslint-plugin \
-@typescript-eslint/parser eslint
+@typescript-eslint/parser
 */
 
 module.exports = {
@@ -56,6 +56,9 @@ module.exports = {
         { blankLine: 'always', prev: 'break', next: '*' },
         { blankLine: 'always', prev: 'directive', next: '*' },
         { blankLine: 'any', prev: 'directive', next: 'directive' },
+        { blankLine: 'always', prev: '*', next: 'function' },
+        { blankLine: 'always', prev: 'function', next: '*' },
+        { blankLine: 'always', prev: 'multiline-expression', next: '*' },
       ],
       'padded-blocks': ['warn', { blocks: 'never', switches: 'never', classes: 'always' }],
       'object-curly-newline': ['warn', {
@@ -108,7 +111,7 @@ module.exports = {
       'quote-props': ['warn', 'consistent-as-needed'],
       'semi': 'off',
       '@typescript-eslint/semi': ['warn', 'never'],
-      '@typescript-eslint/strict-boolean-expressions': ['warn'],
+      '@typescript-eslint/strict-boolean-expressions': ['warn', { allowString: false }],
     },
     ...{
       // code smells
@@ -121,6 +124,7 @@ module.exports = {
       '@typescript-eslint/no-empty-function': ['error'],
       '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: true, ignoreIIFE: true }],
       '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-unnecessary-condition': ['error'],
       'no-unused-private-class-members': ['error'],
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'all', argsIgnorePattern: '^_' }],
