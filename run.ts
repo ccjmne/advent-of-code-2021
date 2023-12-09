@@ -10,7 +10,6 @@ import yargs from 'yargs'
 
 import { Status, getResult } from './do-run'
 import { getPrompt, listen, printSolution } from './io'
-
 import watchFile from './tools/watch'
 
 const { year: y, day: d, watch } = await yargs(process.argv)
@@ -34,14 +33,14 @@ const { year: y, day: d, watch } = await yargs(process.argv)
   .version(false).argv
 
 const prompt = getPrompt()
-const opts = listen(prompt, { input: true, I: true, II: true, year: y, day: d })
+const opts = listen(prompt, { input: 'actual', I: true, II: true, year: y, day: d })
 
 function downloadInput(year: number, day: number): Observable<string> {
   // return from(fetch(`https://echo.free.beeceptor.com/?year=${year}&day=${day}`, {
   return from(fetch(`https://adventofcode.com/${year}/day/${day}/input`, {
     headers: { cookie: `session=${process.env.AOC_SESSION_COOKIE!}` }, // TODO: make sure AOC_SESSION_COOKIE exists
   }).then(res => res.text())).pipe(
-    catchError(() => of('ERROR')),
+    catchError(() => of('Could not download input. Make sure you have a valid session cookie in the AOC_SESSION_COOKIE environment variable.')),
   )
 }
 
@@ -55,7 +54,7 @@ function getTestInput(year: number, day: number): Observable<Buffer> {
   )
 }
 
-function getRealInput(year: number, day: number): Observable<Buffer> {
+function getActualInput(year: number, day: number): Observable<Buffer> {
   return defer(() => from(readFile(`./src/${year}/${day}/input`))).pipe(
     catchError((_, caught) => downloadInput(year, day).pipe(
       switchMap(input => writeFile(`./src/${year}/${day}/input`, input)),
@@ -66,9 +65,9 @@ function getRealInput(year: number, day: number): Observable<Buffer> {
 
 const input$ = opts.pipe(
   distinctUntilChanged(({ input: i0, year: y0, day: d0 }, { input: i1, year: y1, day: d1 }) => i0 === i1 && y0 === y1 && d0 === d1),
-  switchMap(({ input, year, day }) => (input ? watchFile(`./src/${year}/${day}/input`) : watchFile(`./src/${year}/${day}/test-input`)).pipe(startWith(Symbol('FIRST')), map(() => ({ input, year, day })))),
+  switchMap(({ input, year, day }) => (input === 'actual' ? watchFile(`./src/${year}/${day}/input`) : watchFile(`./src/${year}/${day}/test-input`)).pipe(startWith(Symbol('FIRST')), map(() => ({ input, year, day })))),
   // TODO: Probably use throttle with `leading` and `training` both true?
-  concatMap(({ input, year, day }) => (input ? getRealInput(year, day) : getTestInput(year, day))),
+  concatMap(({ input, year, day }) => (input === 'actual' ? getActualInput(year, day) : getTestInput(year, day))),
   map(String),
   share(),
 )

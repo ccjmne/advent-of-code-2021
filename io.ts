@@ -7,7 +7,7 @@ import { Status, type WorkerEvent } from './do-run'
 import Prompt from './tools/prompt'
 
 const { bold, yellow, red, green, blue, white, grey } = colours
-export type Options = { input: boolean, I: boolean, II: boolean, year: number, day: number }
+export type Options = { input: 'actual' | 'test', I: boolean, II: boolean, year: number, day: number }
 
 // TODO: Should only be used in here
 export function getPrompt(): Prompt {
@@ -39,7 +39,7 @@ export function listen(prompt: Prompt, options: Options): Observable<Options> {
         k: { day: day === 1 ? 25 : day - 1, year: day === 1 ? year - 1 : year },
         h: { year: year - 1 },
         l: { year: year + 1 },
-        t: { input: !input },
+        t: { input: input === 'actual' ? 'test' : 'actual' },
       }[name],
     })),
   ).subscribe(opts)
@@ -56,12 +56,11 @@ export function listen(prompt: Prompt, options: Options): Observable<Options> {
   return opts.asObservable()
 }
 
-function makeHeader(year: number, day: number, input: boolean): string {
+function makeHeader(year: number, day: number, input: 'actual' | 'test'): string {
   const [top, bottom] = [[green('✦'), '❖', red('─'), '─'], ['❖', green('✦'), '─', red('─')]]
-  const source = input ? 'actual' : 'test'
 
   return `┌${top.join('').repeat(2)}❄${[...top].reverse().join('').repeat(2)}┐\n`
-  + `${green('│')} AoC ${bold(String(year))}${' '.repeat(3 - String(day).length)}day ${bold(String(day))} ${green('│')}${' '.repeat(23 - source.length)}${grey(`> using ${white(source)} input <`)}\n`
+  + `${green('│')} AoC ${bold(String(year))}${' '.repeat(3 - String(day).length)}day ${bold(String(day))} ${green('│')}${' '.repeat(23 - input.length)}${grey(`> using ${white(input)} input <`)}\n`
   + `└${bottom.join('').repeat(2)}✦${[...bottom].reverse().join('').repeat(2)}┘`
 }
 
@@ -88,7 +87,7 @@ function getPartOutput([status,, data]: WorkerEvent): unknown | unknown[] {
   }[status]
 }
 
-export function printSolution(year: number, day: number, input: boolean, I: WorkerEvent, II: WorkerEvent, runI: boolean, runII: boolean): void {
+export function printSolution(year: number, day: number, input: 'actual' | 'test', I: WorkerEvent, II: WorkerEvent, runI: boolean, runII: boolean): void {
   // eslint-disable-next-line no-console
   console.log([ // buffer output to avoid jumpy prompt
     '\u001Bc', // clear screen
