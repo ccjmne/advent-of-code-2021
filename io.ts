@@ -46,7 +46,7 @@ export function listen(prompt: Prompt, options: Options): Observable<Options> {
 
   opts.subscribe(() => prompt.refresh(
     `\n${grey('─'.repeat(process.stdout.columns))}\nPress `
-    + `[${blue('t')}]: switch ${('input')}, `
+    + `[${blue('r')}|${blue('t')}]: reset or toggle input, `
     + `[${blue('1')}|${blue('2')}]: toggle part I or II, `
     + `[${blue('j')}|${blue('k')}]: navigate days, `
     + `[${blue('h')}|${blue('l')}]: navigate years, `

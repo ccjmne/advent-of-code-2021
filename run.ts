@@ -3,12 +3,12 @@
 // Can use with ./run.ts once this is fixed:
 // https://github.com/TypeStrong/ts-node/issues/1514
 
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, unlink, writeFile } from 'fs/promises'
 
-import { catchError, combineLatest, combineLatestWith, concatMap, defer, distinctUntilChanged, finalize, from, identity, map, of, share, startWith, switchMap, takeWhile, type Observable } from 'rxjs'
+import { catchError, combineLatest, combineLatestWith, concatMap, defer, distinctUntilChanged, filter, finalize, from, identity, map, of, share, startWith, switchMap, takeWhile, withLatestFrom, type Observable } from 'rxjs'
 import yargs from 'yargs'
 
-import { Status, getResult } from './do-run'
+import { getResult, Status } from './do-run'
 import { getPrompt, listen, printSolution } from './io'
 import watchFile from './tools/watch'
 
@@ -62,6 +62,11 @@ function getActualInput(year: number, day: number): Observable<Buffer> {
     )),
   )
 }
+
+prompt.keyPresse$.pipe(
+  filter(({ name }) => name === 'r'),
+  withLatestFrom(opts),
+).subscribe(([,{ year, day, input }]) => { void unlink(`./src/${year}/${day}/${input === 'actual' ? 'input' : 'test-input'}`) }) // TODO: probably see the Promise to completion and handle failure
 
 const input$ = opts.pipe(
   distinctUntilChanged(({ input: i0, year: y0, day: d0 }, { input: i1, year: y1, day: d1 }) => i0 === i1 && y0 === y1 && d0 === d1),
