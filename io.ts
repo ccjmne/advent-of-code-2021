@@ -7,7 +7,7 @@ import { Status, type WorkerEvent } from './do-run'
 import Prompt from './tools/prompt'
 
 const { bold, yellow, red, green, blue, white, grey } = colours
-export type Options = { input: boolean, partI: boolean, partII: boolean, year: number, day: number }
+export type Options = { input: boolean, I: boolean, II: boolean, year: number, day: number }
 
 // TODO: Should only be used in here
 export function getPrompt(): Prompt {
@@ -26,15 +26,15 @@ export function listen(prompt: Prompt, options: Options): Observable<Options> {
 
   prompt.keyPresse$.pipe(
     withLatestFrom(opts),
-    map(([{ name }, { input, partI, partII, year, day }]) => ({
+    map(([{ name }, { input, I, II, year, day }]) => ({
       input,
-      partI,
-      partII,
+      I,
+      II,
       year,
       day,
       ...{
-        1: { partI: !partI },
-        2: { partII: !partII },
+        1: { I: !I },
+        2: { II: !II },
         j: { day: day === 25 ? 1 : day + 1, year: day === 25 ? year + 1 : year },
         k: { day: day === 1 ? 25 : day - 1, year: day === 1 ? year - 1 : year },
         h: { year: year - 1 },

@@ -13,7 +13,7 @@ function toSeconds([s, ns]: [seconds: number, nanoseconds: number]): number {
 }
 
 export function getResult(
-  part: 'partI' | 'partII',
+  part: 'I' | 'II',
   opt$: Observable<Options>,
   input$: Observable<string>,
 ): Observable<WorkerEvent> {

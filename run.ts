@@ -34,7 +34,7 @@ const { year: y, day: d, watch } = await yargs(process.argv)
   .version(false).argv
 
 const prompt = getPrompt()
-const opts = listen(prompt, { input: true, partI: true, partII: true, year: y, day: d })
+const opts = listen(prompt, { input: true, I: true, II: true, year: y, day: d })
 
 function downloadInput(year: number, day: number): Observable<string> {
   // return from(fetch(`https://echo.free.beeceptor.com/?year=${year}&day=${day}`, {
@@ -74,10 +74,10 @@ const input$ = opts.pipe(
 )
 
 combineLatest([
-  getResult('partI', opts, input$),
-  getResult('partII', opts, input$),
+  getResult('I', opts, input$),
+  getResult('II', opts, input$),
 ]).pipe(
   combineLatestWith(opts),
   watch ? identity : takeWhile(([[[I], [II]]]) => ![I, II].every(status => [Status.DONE, Status.ERROR].includes(status)), true),
   finalize(() => process.exit(0)),
-).subscribe(([[I, II], { partI: runI, partII: runII, input, year, day }]) => printSolution(year, day, input, I, II, runI, runII))
+).subscribe(([[I, II], { I: runI, II: runII, input, year, day }]) => printSolution(year, day, input, I, II, runI, runII))
