@@ -2,6 +2,6 @@
   "editor.formatOnSave": false,
   "files.insertFinalNewline": false,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": false
+    "source.organizeImports": "always"
   }
 }
