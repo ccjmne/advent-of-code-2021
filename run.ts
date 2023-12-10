@@ -5,6 +5,7 @@
 
 import { readFile, unlink, writeFile } from 'fs/promises'
 
+import open from 'open'
 import { catchError, combineLatest, combineLatestWith, concatMap, defer, distinctUntilChanged, filter, finalize, from, identity, map, of, share, startWith, switchMap, takeWhile, withLatestFrom, type Observable } from 'rxjs'
 import yargs from 'yargs'
 
@@ -67,6 +68,11 @@ prompt.keyPresse$.pipe(
   filter(({ name }) => name === 'r'),
   withLatestFrom(opts),
 ).subscribe(([,{ year, day, input }]) => { void unlink(`./src/${year}/${day}/${input === 'actual' ? 'input' : 'test-input'}`) }) // TODO: probably see the Promise to completion and handle failure
+
+prompt.keyPresse$.pipe(
+  filter(({ name }) => name === 'o'),
+  withLatestFrom(opts),
+).subscribe(([, { year, day }]) => { void open(`https://adventofcode.com/${year}/day/${day}`) }) // TODO: probably see the Promise to completion and handle failure
 
 const input$ = opts.pipe(
   distinctUntilChanged(({ input: i0, year: y0, day: d0 }, { input: i1, year: y1, day: d1 }) => i0 === i1 && y0 === y1 && d0 === d1),

@@ -50,6 +50,7 @@ export function listen(prompt: Prompt, options: Options): Observable<Options> {
     + `[${blue('1')}|${blue('2')}]: toggle part I or II, `
     + `[${blue('j')}|${blue('k')}]: navigate days, `
     + `[${blue('h')}|${blue('l')}]: navigate years, `
+    + `[${blue('o')}]: open challenge in browser, `
     + `[${blue('q')}]: quit`,
   ))
 
