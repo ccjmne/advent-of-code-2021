@@ -107,6 +107,7 @@ export default class Prompt {
     }
 
     this.interface = readline.createInterface({
+      prompt: '',
       terminal: true,
       input: process.stdin,
       output: new Writable({
