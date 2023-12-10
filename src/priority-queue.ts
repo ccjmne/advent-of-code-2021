@@ -2,26 +2,27 @@ export default class PriorityQueue<T extends string | number> {
 
   private buckets: Record<number, Set<T>> = {}
 
-  private priorities: number[] = []
+  private readonly priorities: number[] = []
 
-  private pSize: number
+  private pSize: number = 0
   public get size(): number {
     return this.pSize
   }
 
-  constructor(...queued: ReadonlyArray<[number, T]>) {
+  constructor(...queued: ReadonlyArray<readonly [number, T]>) {
     this.enqueueAll(...queued)
-    this.pSize = queued.length
   }
 
   public enqueue(priority: number, hash: T): void {
-    this.bucket(priority).add(hash)
-    this.pSize += 1
+    const bucket = this.bucket(priority)
+    if (!bucket.has(hash)) {
+      bucket.add(hash)
+      this.pSize += 1
+    }
   }
 
-  public enqueueAll(...queued: ReadonlyArray<[number, T]>): void {
+  public enqueueAll(...queued: ReadonlyArray<readonly [number, T]>): void {
     queued.forEach(([priority, hash]) => this.enqueue(priority, hash))
-    this.pSize += queued.length
   }
 
   public dequeue(largest = false): [number, T] {
@@ -35,6 +36,7 @@ export default class PriorityQueue<T extends string | number> {
     const next = bucket.values().next().value as T
     bucket.delete(next)
     this.pSize -= 1
+
     if (!bucket.size) {
       delete this.buckets[this.priorities[i]]
       this.priorities.splice(i, 1)
@@ -61,6 +63,7 @@ export default class PriorityQueue<T extends string | number> {
 
     if (lo === hi) {
       this.priorities.splice(lo, 0, priority)
+
       return (this.buckets[priority] = new Set()) // eslint-disable-line no-return-assign
     }
 
