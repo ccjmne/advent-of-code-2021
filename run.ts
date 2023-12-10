@@ -47,7 +47,7 @@ function downloadInput(year: number, day: number): Observable<string> {
 function getTestInput(year: number, day: number): Observable<Buffer> {
   // defer in order to re-attempt reading the file when resubscribing as an attempt to recover from an error
   return defer(() => from(readFile(`./src/${year}/${day}/test-input`))).pipe(
-    catchError((_, caught) => prompt.stdinLineByLine('What\'s the test input?').pipe(
+    catchError((_, caught) => prompt.readDocument('What\'s the test input?').pipe(
       switchMap(input => writeFile(`./src/${year}/${day}/test-input`, input)),
       switchMap(() => caught),
     )),

@@ -75,7 +75,7 @@ export default class Prompt {
     this.redraw()
   }
 
-  public stdinLineByLine(prompt: string): Observable<string> {
+  public readDocument(prompt: string): Observable<string> {
     // TODO: maybe just use `defer` here and create an Observable using `of`, `tap` and `finally` operators?
     return new Observable(sub => {
       process.stdout.write('\u001Bc')
