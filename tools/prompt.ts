@@ -79,22 +79,22 @@ export default class Prompt {
     // TODO: maybe just use `defer` here and create an Observable using `of`, `tap` and `finally` operators?
     return new Observable(sub => {
       process.stdout.write('\u001Bc')
-      process.stdout.write(prompt)
+      process.stdout.write(prompt.trimEnd())
+      process.stdout.write(' (Ctrl-D to continue)')
       process.stdout.write('\n')
 
       this.reading$.next(true)
       this.updateInterface(true)
-      const buffer: string[] = []
+      sub.add(() => {
+        this.reading$.next(false)
+        this.updateInterface(false)
+      })
 
+      const buffer: string[] = []
       this.interface.on('line', data => buffer.push(data))
       this.interface.on('close', () => {
         sub.next(buffer.join('\n'))
         sub.complete()
-      })
-
-      sub.add(() => {
-        this.reading$.next(false)
-        this.updateInterface(false)
       })
     })
   }
