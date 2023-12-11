@@ -15,9 +15,9 @@ export default solution({
   partI({ galaxies, voidX, voidY }) { // start 22:10, stop 22:20
     return galaxies
       .flatMap((g, i) => galaxies.slice(i + 1).map(gg => [g, gg]))
-      .map(([a, b]) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1])
-        + voidX.filter(x => x > Math.min(a[0], b[0]) && x < Math.max(a[0], b[0])).length
-        + voidY.filter(y => y > Math.min(a[1], b[1]) && y < Math.max(a[1], b[1])).length)
+      .map(([[x0, y0], [x1, y1]]) => Math.abs(x0 - x1) + Math.abs(y0 - y1)
+        + voidX.filter(x => x > Math.min(x0, x1) && x < Math.max(x0, x1)).length
+        + voidY.filter(y => y > Math.min(y0, y1) && y < Math.max(y0, y1)).length)
       .reduce((sum, n) => sum + n, 0)
   },
 
@@ -25,9 +25,9 @@ export default solution({
     const expansion = 1_000_000
     return galaxies
       .flatMap((g, i) => galaxies.slice(i + 1).map(gg => [g, gg]))
-      .map(([a, b]) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1])
-        + voidX.filter(x => x > Math.min(a[0], b[0]) && x < Math.max(a[0], b[0])).length * (expansion - 1)
-        + voidY.filter(y => y > Math.min(a[1], b[1]) && y < Math.max(a[1], b[1])).length * (expansion - 1))
+      .map(([[x0, y0], [x1, y1]]) => Math.abs(x0 - x1) + Math.abs(y0 - y1)
+        + voidX.filter(x => x > Math.min(x0, x1) && x < Math.max(x0, x1)).length * (expansion - 1)
+        + voidY.filter(y => y > Math.min(y0, y1) && y < Math.max(y0, y1)).length * (expansion - 1))
       .reduce((sum, n) => sum + n, 0)
   },
 })
