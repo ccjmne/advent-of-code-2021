@@ -7,23 +7,16 @@ type Coords = `${number},${number}`
 type Tile = { at: Coords, pixel: string, nghbrs: Coords[] }
 
 function neighbours(pixel: string, [x, y]: [number, number]): Coords[] {
-  const candidates = {
-    N: `${x},${y - 1}`,
-    S: `${x},${y + 1}`,
-    W: `${x - 1},${y}`,
-    E: `${x + 1},${y}`,
-  }
-
   return ({
-    'S': ['N', 'S', 'W', 'E'],
+    'S': [`${x},${y - 1}`, `${x},${y + 1}`, `${x - 1},${y}`, `${x + 1},${y}`],
     '.': [],
-    '|': ['N', 'S'],
-    '-': ['W', 'E'],
-    'L': ['N', 'E'],
-    'J': ['N', 'W'],
-    '7': ['S', 'W'],
-    'F': ['S', 'E'],
-  }[pixel] as ('N' | 'S' | 'W' | 'E')[]).map(dir => candidates[dir] as Coords)
+    '|': [`${x},${y - 1}`, `${x},${y + 1}`],
+    '-': [`${x - 1},${y}`, `${x + 1},${y}`],
+    'J': [`${x},${y - 1}`, `${x - 1},${y}`],
+    'L': [`${x},${y - 1}`, `${x + 1},${y}`],
+    '7': [`${x},${y + 1}`, `${x - 1},${y}`],
+    'F': [`${x},${y + 1}`, `${x + 1},${y}`],
+  }[pixel]) as Coords[]
 }
 
 function patchStart({ at, nghbrs }: Tile, tiles: Map<Coords, Tile>): Tile {
@@ -33,12 +26,12 @@ function patchStart({ at, nghbrs }: Tile, tiles: Map<Coords, Tile>): Tile {
     at,
     nghbrs: actual,
     pixel: [
-      [new Set([`${x},${y + 1}`, `${x},${y - 1}`]), '|'] as const,
-      [new Set([`${x + 1},${y}`, `${x - 1},${y}`]), '-'] as const,
-      [new Set([`${x + 1},${y}`, `${x},${y - 1}`]), 'L'] as const,
-      [new Set([`${x - 1},${y}`, `${x},${y - 1}`]), 'J'] as const,
-      [new Set([`${x - 1},${y}`, `${x},${y + 1}`]), '7'] as const,
-      [new Set([`${x + 1},${y}`, `${x},${y + 1}`]), 'F'] as const,
+      [new Set([`${x},${y - 1}`, `${x},${y + 1}`]), '|'] as const,
+      [new Set([`${x - 1},${y}`, `${x + 1},${y}`]), '-'] as const,
+      [new Set([`${x},${y - 1}`, `${x - 1},${y}`]), 'J'] as const,
+      [new Set([`${x},${y - 1}`, `${x + 1},${y}`]), 'L'] as const,
+      [new Set([`${x},${y + 1}`, `${x - 1},${y}`]), '7'] as const,
+      [new Set([`${x},${y + 1}`, `${x + 1},${y}`]), 'F'] as const,
     ].find(([set]) => actual.every(nghbr => set.has(nghbr)))![1],
   }
 }
