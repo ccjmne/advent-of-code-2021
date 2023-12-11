@@ -4,7 +4,7 @@ import { range } from 'src/tsutils'
 export default solution({
   parse(data: string) {
     const grid = data.trim().split(/\n/g).map(line => line.split(''))
-    const galaxies = grid.flatMap((line, y) => line.flatMap((pixel, x) => (pixel === '#' ? [[x, y]] : [])))
+    const galaxies = grid.flatMap((line, y) => line.flatMap((pixel, x) => (pixel === '#' ? [[x, y] as const] : [])))
     return {
       galaxies,
       voidX: range(grid[0].length).filter(x => !galaxies.some(([xx]) => xx === x)),
