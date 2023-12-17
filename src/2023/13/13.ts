@@ -17,7 +17,7 @@ function clean(strips: string[]): number {
 }
 
 function smudgy(strips: string[]): number {
-  return strips.findIndex((_, i) => i > 0 && diff(strips.slice(Math.max(0, 2 * i - strips.length), i), strips.slice(i, 2 * i)) === 1)
+  return strips.findIndex((_, i) => 1 === diff(strips.slice(Math.max(0, 2 * i - strips.length), i), strips.slice(i, 2 * i)))
 }
 
 export default solution({
