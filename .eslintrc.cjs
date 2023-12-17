@@ -112,6 +112,7 @@ module.exports = {
       'semi': 'off',
       '@typescript-eslint/semi': ['warn', 'never'],
       '@typescript-eslint/strict-boolean-expressions': ['warn', { allowString: false }],
+      'yoda': 'off',
     },
     ...{
       // code smells
