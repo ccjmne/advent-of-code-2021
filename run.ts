@@ -74,6 +74,11 @@ prompt.keyPresse$.pipe(
   withLatestFrom(opts),
 ).subscribe(([, { year, day }]) => { void open(`https://adventofcode.com/${year}/day/${day}`) }) // TODO: probably see the Promise to completion and handle failure
 
+prompt.keyPresse$.pipe(
+  filter(({ name }) => name === 'e'),
+  withLatestFrom(opts),
+).subscribe(([, { year, day }]) => { void open(`./src/${year}/${day}/${day}.ts`, { app: { name: 'code' } }) }) // TODO: probably see the Promise to completion and handle failure
+
 const input$ = opts.pipe(
   distinctUntilChanged(({ input: i0, year: y0, day: d0 }, { input: i1, year: y1, day: d1 }) => i0 === i1 && y0 === y1 && d0 === d1),
   switchMap(({ input, year, day }) => (input === 'actual' ? watchFile(`./src/${year}/${day}/input`) : watchFile(`./src/${year}/${day}/test-input`)).pipe(startWith(Symbol('FIRST')), map(() => ({ input, year, day })))),

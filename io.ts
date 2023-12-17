@@ -51,6 +51,7 @@ export function listen(prompt: Prompt, options: Options): Observable<Options> {
     + `[${blue('j')}|${blue('k')}]: navigate days, `
     + `[${blue('h')}|${blue('l')}]: navigate years,\n      `
     + `[${blue('o')}]: open challenge in browser, `
+    + `[${blue('e')}]: edit implementation,   `
     + `[${blue('q')}]: quit`,
   ))
 
