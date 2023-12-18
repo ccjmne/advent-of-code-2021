@@ -7,9 +7,8 @@ function clockwise(strips: string[]): string[] {
 
 function tilt(strips: string[]): string[] {
   return strips.map(strip => strip
-    .split(/#/g)
-    .map(s => [[...s.matchAll(/O/g)].length, s.length])
-    .map(([Os, l]) => 'O'.repeat(Os) + '.'.repeat(l - Os))
+    .split('#')
+    .map(s => 'O'.repeat([...s.matchAll(/O/g)].length).padEnd(s.length, '.'))
     .join('#'))
 }
 
