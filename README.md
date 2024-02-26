@@ -1,5 +1,9 @@
-# advent-of-code-2021
+# advent-of-code
+
 My entries for https://adventofcode.com! 🥳
+
+You may want to check out the `interactive-runner` branch, which does some *really* funky stuff ;)  
+It'll probably be worked on again next December. Maybe switching to Bun would be immensely helpful; that, or Rust.
 
 ## Usage
 
