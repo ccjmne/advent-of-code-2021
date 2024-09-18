@@ -80,7 +80,7 @@ function makeTitleBar(title: string, [status, elapsed]: WorkerEvent): string {
   } ├${'─'.repeat(process.stdout.columns - 50 - 8)}`)
 }
 
-function getPartOutput([status,, data]: WorkerEvent): unknown | unknown[] {
+function getPartOutput([status,, data]: WorkerEvent): unknown {
   return {
     [Status.RESPAWNING]: grey('...'),
     [Status.COMPUTING]: grey('...'),

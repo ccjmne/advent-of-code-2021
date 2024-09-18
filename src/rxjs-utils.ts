@@ -1,4 +1,4 @@
-import { Observable, Subject, asapScheduler, observeOn, startWith, type OperatorFunction, defer } from 'rxjs'
+import { Observable, Subject, asapScheduler, defer, observeOn, startWith, type OperatorFunction } from 'rxjs'
 
 export function bufferUntil<T>(predicate: (value: T) => boolean): OperatorFunction<T, T[]> {
   return (source: Observable<T>) => new Observable<T[]>(observer => {

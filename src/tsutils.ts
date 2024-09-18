@@ -50,8 +50,8 @@ export function aggregate<T, K extends string, V = T[]>(
   aggregator: (aggregated: T[]) => V = identity,
 ): Record<K, V> {
   return mapValues(
-    items.reduce(
-      (acc, item) => ({ ...acc, [by(item)]: [...(acc[by(item)] ?? []), item] }),
+    items.map(item => [by(item), item] as const).reduce(
+      (acc, [k, v]) => ({ ...acc, [k]: [...(acc[k] ?? []), v] }),
       {} as Record<K, T[]>,
     ),
     aggregator,
@@ -66,7 +66,6 @@ export function zip<A, B>(a: A[], b: B[]): ReadonlyArray<[A, B]> {
   return a.map((t, i) => [t, b[i]])
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export function merge<A extends object, B extends object>(a: A[], b: B[]): ReadonlyArray<A & B> {
   return zip(a, b).map(([l, r]) => ({ ...l, ...r }))
 }
