@@ -3,12 +3,12 @@ import { resolve } from 'path';
 import { BannerPlugin, Configuration } from 'webpack';
 
 const src = resolve(__dirname, 'src');
-const tools = resolve(__dirname, 'tools');
+const devtools = resolve(__dirname, 'devtools');
 const dist = resolve(__dirname, 'dist');
 
 export default (): Configuration => ({
   entry: {
-    run: resolve(tools, 'run.ts'),
+    run: resolve(devtools, 'run.ts'),
   },
   experiments: { topLevelAwait: true },
   output: { path: dist, clean: true },
@@ -29,12 +29,12 @@ export default (): Configuration => ({
      * Add shebang.
      * See https://whitescreen.nicolaas.net/programming/windows-shebangs
      */
-    new BannerPlugin({ banner: `#! node`, raw: true }),
+    new BannerPlugin({ banner: `#!/usr/bin/env node`, raw: true }),
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '...'],
     // IMPORTANT: prioritise "global" node modules, for extending modules (e.g.: d3-selection-multi enhances d3-selection)
-    modules: [tools, src, resolve(__dirname), resolve(__dirname, 'node_modules'), 'node_modules'],
+    modules: [devtools, src, resolve(__dirname), resolve(__dirname, 'node_modules'), 'node_modules'],
     mainFields: ['webpack', 'module', 'browser', 'web', 'browserify', ['jam', 'main'], 'main'],
   },
   devtool: 'source-map',

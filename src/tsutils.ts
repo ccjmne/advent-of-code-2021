@@ -17,13 +17,15 @@ export function sum<T>(items: T[], by: (item: T) => number = identity): number {
   return items.reduce((total, item) => total + by(item), 0);
 }
 
-export function split<T, U = T[]>(items: T[], chunkSize: number, mapper: (chunk: T[]) => U = identity): U[] {
-  return items.reduce(
-    ({ chunks, buffer }: { chunks: U[], buffer: T[] }, item: T) => (buffer.push(item) && (buffer.length === chunkSize)
+export function split<T, U = T[]>(items: T[], chunkSize: number, mapper: (chunk: T[]) => U = identity, stripRemainder = false): U[] {
+  const { chunks: res, buffer: remainder } = items.reduce(
+    ({ chunks, buffer }, item: T) => (buffer.push(item) === chunkSize
       ? { chunks: [...chunks, mapper(buffer)], buffer: [] }
       : { chunks, buffer }),
-    { chunks: [], buffer: [] },
-  ).chunks;
+    { chunks: [] as U[], buffer: [] as T[] },
+  );
+
+  return (stripRemainder || !remainder.length) ? res : [...res, mapper(remainder)];
 }
 
 export function mapValues<V, W>(object: Record<string, V>, by: (value: V, key: string) => W): Record<string, W> {
@@ -78,7 +80,7 @@ export function count<T>(items: T[], when: (item: T) => boolean): number {
 }
 
 export function mapFind<T, R>(items: T[], map: (t: T) => R, find: (r: R) => boolean = isNotNil): Maybe<R> {
-  return items.reduce((r, t) => r ?? (rt => (find(rt) ? rt : null))(map(t)), null);
+  return items.reduce((r, t) => r ?? (rt => (find(rt) ? rt : null))(map(t)), null as Maybe<R>);
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types

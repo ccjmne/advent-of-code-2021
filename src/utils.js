@@ -26,9 +26,10 @@ export function sum(items, by = identity) {
  * @param { function(V, K): W } by
  * @returns { { [key in K]: W } }
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function mapValues(object, by) {
   return Object.fromEntries(
-    Object.entries(object).map(([k, v]) => [k, by(v, k)])
+    Object.entries(object).map(([k, v]) => [k, by(v, k)]),
   );
 }
 
@@ -45,7 +46,7 @@ export function aggregate(items, by = identity, aggregator = identity) {
   return mapValues(
     items.reduce(
       (acc, item) => ({ ...acc, [by(item)]: [...(acc[by(item)] ?? []), item] }),
-      {}
+      {},
     ),
     aggregator,
   );
@@ -74,12 +75,12 @@ export function select(items, selector) {
 
 /** @param { number[] } values @returns { number } */
 export function min(values) {
-  return select(values, (a, b) => b < a ? b : a);
+  return select(values, (a, b) => (b < a ? b : a));
 }
 
 /** @param { number[] } values @returns { number } */
 export function max(values) {
-  return select(values, (a, b) => b > a ? b : a);
+  return select(values, (a, b) => (b > a ? b : a));
 }
 
 /**
@@ -92,8 +93,8 @@ export function count(items, when) {
   return items.reduce((total, item) => total + +when(item), 0);
 }
 
-export const Styles = Object.freeze({ RESET: 0b0000001, BRIGHT: 0b0000010, DIM: 0b0000100, UNDERSCORE: 0b0001000, BLINK: 0b0010000, REVERSE: 0b0100000, HIDDEN: 0b1000000 });
-const STYLES_MAP = { [Styles.RESET]: '\x1b[0m', [Styles.BRIGHT]: '\x1b[1m', [Styles.DIM]: '\x1b[2m', [Styles.UNDERSCORE]: '\x1b[4m', [Styles.BLINK]: '\x1b[5m', [Styles.REVERSE]: '\x1b[7m', [Styles.HIDDEN]: '\x1b[8m' };
+export const Styles = Object.freeze({ BLACK: 1, RED: 2, GREEN: 4, YELLOW: 8, BLUE: 16, MAGENTA: 32, CYAN: 64, WHITE: 128, RESET: 256, BRIGHT: 512, DIM: 1024, UNDERSCORE: 2048, BLINK: 4096, REVERSE: 8192, HIDDEN: 16384 });
+const STYLES_MAP = { [Styles.BLACK]: '\x1b[30m', [Styles.RED]: '\x1b[31m', [Styles.GREEN]: '\x1b[32m', [Styles.YELLOW]: '\x1b[33m', [Styles.BLUE]: '\x1b[34m', [Styles.MAGENTA]: '\x1b[35m', [Styles.CYAN]: '\x1b[36m', [Styles.WHITE]: '\x1b[37m', [Styles.RESET]: '\x1b[0m', [Styles.BRIGHT]: '\x1b[1m', [Styles.DIM]: '\x1b[2m', [Styles.UNDERSCORE]: '\x1b[4m', [Styles.BLINK]: '\x1b[5m', [Styles.REVERSE]: '\x1b[7m', [Styles.HIDDEN]: '\x1b[8m' };
 
 /**
  * @param { string } text
@@ -129,10 +130,9 @@ export function identity(t) {
 export function split(items, chunkSize, mapper = identity) {
   return items.reduce(
     /** @param { { chunks: U[], buffer: T[] } } acc @param { T } item */
-    ({ chunks, buffer }, item) =>
-      buffer.push(item) && (buffer.length === chunkSize)
-        ? { chunks: [...chunks, mapper(buffer)], buffer: []}
-        : { chunks, buffer },
-     { chunks: [], buffer: [] }
+    ({ chunks, buffer }, item) => (buffer.push(item) && (buffer.length === chunkSize)
+      ? { chunks: [...chunks, mapper(buffer)], buffer: [] }
+      : { chunks, buffer }),
+    { chunks: [], buffer: [] },
   ).chunks;
 }

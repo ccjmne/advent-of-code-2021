@@ -35,15 +35,15 @@ try {
 
   const input = parse(data);
   const I = partI(input);
-  console.log('Part I:', ...(Array.isArray(I) ? I : [I]));
+  console.log('Part I:', ...[I].flat());
   const II = partII(input);
-  console.log('Part II:', ...(Array.isArray(II) ? II : [II]));
-} catch (_) {
+  console.log('Part II:', ...[II].flat());
+} catch (e) {
   console.error(
     style(`Unable to run solution for:`, Styles.RED | Styles.BRIGHT), { year: y, day: d },
     style(`\nExpected implementation in:`, Styles.RED | Styles.BRIGHT), `/src/${y}/${d}/${d}.ts`,
     style(`\n         Expected input in:`, Styles.RED | Styles.BRIGHT), `/src/${y}/${d}/input`,
   );
 
-  console.error('\n'.padStart(80, '-'), _);
+  console.error('\n'.padStart(80, '-'), e);
 }

@@ -12,7 +12,7 @@
         "<node_internals>/**"
       ],
       "program": "${workspaceFolder}\\dist\\run.js",
-      // "args": ["--day", "20"],
+      "args": ["--day", "23"],
       "outFiles": [
         "${workspaceFolder}/**/*.js"
       ]

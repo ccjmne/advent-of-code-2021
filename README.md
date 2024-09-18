@@ -15,15 +15,15 @@ npm run dev:build
 
 Watch-run built code:
 ```shell
-npm run dev:run          [-y,--year <year>] [-d,--day <day>]
+npm run dev:run          [--year <year>] [--day <day>]
 # or
-nodemon --quiet dist/run [-y,--year <year>] [-d,--day <day>]
+nodemon --quiet dist/run [--year <year>] [--day <day>]
 ```
 
 Run solution:
 ```
 # or
-node dist/run            [-y,--year <year>] [-d,--day <day>]
+node dist/run            [--year <year>] [--day <day>]
 # or
-dist/run.js              [-y,--year <year>] [-d,--day <day>]
+dist/run.js              [--year <year>] [--day <day>]
 ```
