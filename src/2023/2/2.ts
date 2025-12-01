@@ -3,15 +3,12 @@ import { max, sum } from 'src/tsutils'
 
 export default solution({
   parse(data: string) {
-    return data
-      .trim()
-      .split(/\n/g)
-      .map(line => ({
-        id: Number(line.match(/^Game (\d+)/)![1]),
-        r: max([...line.matchAll(/(\d+) red/g)].map(match => Number(match[1]))) ?? 0,
-        g: max([...line.matchAll(/(\d+) green/g)].map(match => Number(match[1]))) ?? 0,
-        b: max([...line.matchAll(/(\d+) blue/g)].map(match => Number(match[1]))) ?? 0,
-      }))
+    return data.trim().split(/\n/g).map(line => ({
+      id: Number(line.match(/^Game (\d+)/)![1]),
+      r: max(line.match(/(\d+) red/g)  !.map(Number)) ?? 0,
+      g: max(line.match(/(\d+) green/g)!.map(Number)) ?? 0,
+      b: max(line.match(/(\d+) blue/g) !.map(Number)) ?? 0,
+    }))
   },
 
   partI(input): number {
