@@ -4,6 +4,7 @@
 // https://github.com/TypeStrong/ts-node/issues/1514
 
 import { readFile, unlink, writeFile } from 'fs/promises'
+import { spawn } from 'node:child_process';
 
 import open from 'open'
 import { catchError, combineLatest, combineLatestWith, concatMap, defer, distinctUntilChanged, filter, finalize, from, identity, map, of, share, startWith, switchMap, takeWhile, withLatestFrom, type Observable } from 'rxjs'
@@ -77,7 +78,7 @@ prompt.keyPresse$.pipe(
 prompt.keyPresse$.pipe(
   filter(({ name }) => name === 'e'),
   withLatestFrom(opts),
-).subscribe(([, { year, day }]) => { void open(`./src/${year}/${day}/${day}.ts`, { app: { name: 'code' } }) }) // TODO: probably see the Promise to completion and handle failure
+).subscribe(([, { year, day }]) => spawn('gtk-launch', ['nvim', `./src/${year}/${day}/${day}.ts`])) // TODO: probably see the Promise to completion and handle failure
 
 const input$ = opts.pipe(
   distinctUntilChanged(({ input: i0, year: y0, day: d0 }, { input: i1, year: y1, day: d1 }) => i0 === i1 && y0 === y1 && d0 === d1),
