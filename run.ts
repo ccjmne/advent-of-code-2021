@@ -40,7 +40,7 @@ const opts = listen(prompt, { input: 'actual', I: true, II: true, year: y, day: 
 function downloadInput(year: number, day: number): Observable<string> {
   // return from(fetch(`https://echo.free.beeceptor.com/?year=${year}&day=${day}`, {
   return from(fetch(`https://adventofcode.com/${year}/day/${day}/input`, {
-    headers: { cookie: `session=${process.env.AOC_SESSION_COOKIE!}` }, // TODO: make sure AOC_SESSION_COOKIE exists
+    headers: { cookie: `session=${process.env.AOC_SESSION!}` }, // TODO: make sure AOC_SESSION exists
   }).then(res => res.text())).pipe(
     catchError(() => of('Could not download input. Make sure you have a valid session cookie in the AOC_SESSION_COOKIE environment variable.')),
   )
